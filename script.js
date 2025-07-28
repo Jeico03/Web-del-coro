@@ -124,240 +124,115 @@ const characters = [
 	},
 ];
 
-// Global variables
 let currentIndex = 0;
-let isAnimating = false;
-
-// DOM elements
 const characterName = document.getElementById("characterName");
 const characterRole = document.getElementById("characterRole");
 const characterBirthDate = document.getElementById("characterBirthDate");
-const characterDescription = document.getElementById("characterDescription");
-const characterQuote = document.getElementById("characterQuote");
 const characterPhoto = document.getElementById("characterPhoto");
 const characterInitial = document.getElementById("characterInitial");
+const characterDescription = document.getElementById("characterDescription");
+const characterQuote = document.getElementById("characterQuote");
 const leaderBadge = document.getElementById("leaderBadge");
-const prevBtn = document.getElementById("prevBtn");
-const nextBtn = document.getElementById("nextBtn");
-const indicators = document.getElementById("indicators");
-const characterGrid = document.getElementById("characterGrid");
 const currentSlide = document.getElementById("currentSlide");
 const totalSlides = document.getElementById("totalSlides");
+const characterGrid = document.getElementById("characterGrid");
+const indicators = document.getElementById("indicators");
 
-// Initialize the slider
-function init() {
-	createParticles();
-	createIndicators();
-	createCharacterGrid();
-	updateSlide();
-	setupEventListeners();
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-	// Set total slides
-	totalSlides.textContent = characters.length;
-}
-
-// Create floating particles
-function createParticles() {
-	const particlesContainer = document.getElementById("particles");
-	const particleCount = 50;
-
-	for (let i = 0; i < particleCount; i++) {
-		const particle = document.createElement("div");
-		particle.className = "particle";
-		particle.style.left = Math.random() * 100 + "%";
-		particle.style.animationDelay = Math.random() * 6 + "s";
-		particle.style.animationDuration = Math.random() * 3 + 3 + "s";
-		particlesContainer.appendChild(particle);
-	}
-}
-
-// Create slide indicators
-function createIndicators() {
-	indicators.innerHTML = "";
-	characters.forEach((_, index) => {
-		const indicator = document.createElement("div");
-		indicator.className = "indicator";
-		if (index === currentIndex) indicator.classList.add("active");
-		indicator.addEventListener("click", () => goToSlide(index));
-		indicators.appendChild(indicator);
-	});
-}
-
-// Create character grid
-function createCharacterGrid() {
-	characterGrid.innerHTML = "";
-	characters.forEach((character, index) => {
-		const gridItem = document.createElement("div");
-		gridItem.className = "grid-character";
-		if (index === currentIndex) gridItem.classList.add("active");
-
-		gridItem.innerHTML = `
-            <div class="grid-avatar ${index === currentIndex ? "active" : ""}">
-                <img src="${character.photo}" alt="${
-			character.name
-		}" class="grid-character-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <span class="grid-character-initial" style="display: none;">${
-									character.initial
-								}</span>
-                ${
-									character.isLeader
-										? '<span class="grid-leader-crown">👑</span>'
-										: ""
-								}
-            </div>
-            <p class="grid-character-name">${character.name}</p>
-        `;
-
-		gridItem.addEventListener("click", () => goToSlide(index));
-		characterGrid.appendChild(gridItem);
-	});
-}
-
-// Update slide content
 function updateSlide() {
-	if (isAnimating) return;
-
 	const character = characters[currentIndex];
 
-	// Update text content with animation
-	characterName.style.opacity = "0";
-	characterRole.style.opacity = "0";
-	characterBirthDate.style.opacity = "0";
-	characterDescription.style.opacity = "0";
+	// Actualizar textos
+	characterName.textContent = character.name;
+	characterRole.textContent = character.role;
+	characterBirthDate.textContent = character.birthDate;
+	characterDescription.textContent = character.description;
+	characterQuote.textContent = character.quote || "";
 
-	setTimeout(() => {
-		characterName.textContent = character.name;
-		characterRole.textContent = character.role;
-		characterBirthDate.textContent = character.birthDate;
-		characterDescription.textContent = character.description;
+	// Mostrar u ocultar cita
+	characterQuote.style.display = character.quote ? "block" : "none";
 
-		// Animate text back in
-		characterName.style.opacity = "1";
-		characterRole.style.opacity = "1";
-		characterBirthDate.style.opacity = "1";
-		characterDescription.style.opacity = "1";
-	}, 200);
-
-	// Update photo with better error handling
-	characterPhoto.style.display = "block";
-	characterInitial.style.display = "none";
-
-	characterPhoto.onload = function () {
-		this.style.opacity = "1";
-		characterInitial.style.display = "none";
-	};
-
-	characterPhoto.onerror = function () {
-		this.style.display = "none";
+	// Imagen o inicial
+	characterPhoto.src = character.photo;
+	characterPhoto.onerror = () => {
+		characterPhoto.style.display = "none";
 		characterInitial.style.display = "flex";
 		characterInitial.textContent = character.initial;
 	};
+	characterPhoto.onload = () => {
+		characterPhoto.style.display = "block";
+		characterInitial.style.display = "none";
+	};
 
-	characterPhoto.src = character.photo;
-	characterPhoto.alt = character.name;
-
-	// Update quote
-	if (character.quote) {
-		characterQuote.textContent = character.quote;
-		characterQuote.classList.add("show");
-	} else {
-		characterQuote.classList.remove("show");
-	}
-
-	// Update leader badge
+	// Mostrar o quitar insignia de líder
 	if (character.isLeader) {
 		leaderBadge.classList.add("show");
 	} else {
 		leaderBadge.classList.remove("show");
 	}
 
-	// Update indicators
-	document.querySelectorAll(".indicator").forEach((indicator, index) => {
-		indicator.classList.toggle("active", index === currentIndex);
-	});
-
-	// Update character grid
-	document.querySelectorAll(".grid-character").forEach((gridItem, index) => {
-		const avatar = gridItem.querySelector(".grid-avatar");
-		avatar.classList.toggle("active", index === currentIndex);
-	});
-
-	// Update counter
+	// Actualizar contador
 	currentSlide.textContent = currentIndex + 1;
+
+	// Resaltar en cuadrícula
+	document.querySelectorAll(".grid-character").forEach((card, index) => {
+		card.classList.toggle("active", index === currentIndex);
+	});
+
+	// Resaltar indicador
+	document.querySelectorAll(".indicator").forEach((dot, index) => {
+		dot.classList.toggle("active", index === currentIndex);
+	});
 }
 
-// Go to specific slide
 function goToSlide(index) {
-	if (isAnimating || index === currentIndex) return;
-
-	isAnimating = true;
+	if (index < 0 || index >= characters.length) return;
 	currentIndex = index;
-
-	// Add slide transition effect
-	const sliderCard = document.querySelector(".slider-card");
-	sliderCard.style.transform = "scale(0.95)";
-	sliderCard.style.opacity = "0.7";
-
-	setTimeout(() => {
-		updateSlide();
-		sliderCard.style.transform = "scale(1)";
-		sliderCard.style.opacity = "1";
-		isAnimating = false;
-	}, 300);
+	updateSlide();
 }
 
-// Next slide
 function nextSlide() {
-	const nextIndex = (currentIndex + 1) % characters.length;
-	goToSlide(nextIndex);
+	currentIndex = (currentIndex + 1) % characters.length;
+	updateSlide();
 }
 
-// Previous slide
-function prevSlide() {
-	const prevIndex = (currentIndex - 1 + characters.length) % characters.length;
-	goToSlide(prevIndex);
+function prevSlideFunc() {
+	currentIndex = (currentIndex - 1 + characters.length) % characters.length;
+	updateSlide();
 }
 
-// Setup event listeners
-function setupEventListeners() {
-	prevBtn.addEventListener("click", prevSlide);
-	nextBtn.addEventListener("click", nextSlide);
-
-	// Keyboard navigation
-	document.addEventListener("keydown", e => {
-		if (e.key === "ArrowLeft") prevSlide();
-		if (e.key === "ArrowRight") nextSlide();
+function createCharacterGrid() {
+	characters.forEach((char, i) => {
+		const card = document.createElement("div");
+		card.classList.add("grid-character");
+		if (i === currentIndex) card.classList.add("active");
+		card.innerHTML = `
+        <div class="grid-avatar">${char.initial}</div>
+        <p class="grid-name">${char.name}</p>
+      `;
+		card.addEventListener("click", () => goToSlide(i));
+		characterGrid.appendChild(card);
 	});
-
-	// Touch/swipe support
-	let startX = 0;
-	let endX = 0;
-
-	document.addEventListener("touchstart", e => {
-		startX = e.touches[0].clientX;
-	});
-
-	document.addEventListener("touchend", e => {
-		endX = e.changedTouches[0].clientX;
-		handleSwipe();
-	});
-
-	function handleSwipe() {
-		const threshold = 50;
-		const diff = startX - endX;
-
-		if (Math.abs(diff) > threshold) {
-			if (diff > 0) {
-				nextSlide();
-			} else {
-				prevSlide();
-			}
-		}
-	}
-
-	// Auto-play (optional - uncomment to enable)
-	// setInterval(nextSlide, 5000);
 }
 
-// Initialize when DOM is loaded
-document.addEventListener("DOMContentLoaded", init);
+function createIndicators() {
+	characters.forEach((_, i) => {
+		const dot = document.createElement("span");
+		dot.classList.add("indicator");
+		if (i === currentIndex) dot.classList.add("active");
+		dot.addEventListener("click", () => goToSlide(i));
+		indicators.appendChild(dot);
+	});
+}
+
+// Listeners
+prevBtn.addEventListener("click", prevSlideFunc);
+nextBtn.addEventListener("click", nextSlide);
+
+// Inicialización
+totalSlides.textContent = characters.length;
+createCharacterGrid();
+createIndicators();
+updateSlide();
