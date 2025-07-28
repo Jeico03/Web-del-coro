@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎵 Los Peaky Blinders 🎵</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1 class="main-title">🎵 Los Peaky Blinders 🎵</h1>
+      <p class="subtitle">"No somos solo un grupo, somos una hermandad forjada en cada paso, en cada lucha"</p>
+    </header>
+
+    <!-- Main Slider -->
+    <div class="slider-container">
+      <div class="slider-card">
+        <!-- Leader Badge -->
+        <div class="leader-badge" id="leaderBadge">
+          <span class="crown">👑</span>
+          <span>JEFE</span>
+        </div>
+
+        <div class="card-content">
+          <!-- Character Avatar and Info -->
+          <div class="character-info">
+            <div class="avatar-container">
+              <div class="avatar" id="characterAvatar">
+                <!-- This will be replaced by photo or show initial -->
+                <img id="characterPhoto" src="/placeholder.svg" alt="" class="character-photo">
+                <span id="characterInitial" class="character-initial"></span>
+              </div>
+              <div class="avatar-ring"></div>
+            </div>
+
+            <h2 class="character-name" id="characterName"></h2>
+            <p class="character-role" id="characterRole"></p>
+            <div class="birth-date">
+              <span class="calendar-icon">📅</span>
+              <span id="characterBirthDate"></span>
+            </div>
+          </div>
+
+          <!-- Character Description -->
+          <div class="character-details">
+            <div class="description" id="characterDescription"></div>
+            <blockquote class="quote" id="characterQuote"></blockquote>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="navigation">
+        <button class="nav-btn prev-btn" id="prevBtn">
+          <span class="arrow">‹</span>
+        </button>
+
+        <div class="indicators" id="indicators"></div>
+
+        <button class="nav-btn next-btn" id="nextBtn">
+          <span class="arrow">›</span>
+        </button>
+      </div>
+
+      <!-- Counter -->
+      <div class="counter">
+        <span id="currentSlide">1</span> de <span id="totalSlides">9</span>
+      </div>
+    </div>
+
+    <!-- Character Grid Preview -->
+    <div class="character-grid-section">
+      <h3 class="grid-title">Todos los Miembros</h3>
+      <div class="character-grid" id="characterGrid"></div>
+    </div>
+  </div>
+
+  <!-- Floating particles background -->
+  <div class="particles" id="particles"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
